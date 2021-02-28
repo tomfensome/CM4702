@@ -84,6 +84,7 @@ class CPUTemp:
 
 # Declare an instance of SenseHat.
 sense = SenseHat()
+id = 1
 # Print message to terminal to confirm publishing.  
 print('Begin Publish')
 # try ensures that program continues to publish messages until stopped.    
@@ -103,15 +104,20 @@ try:
     actualTemp = int(temp_calc)
 # Obtain the current time.
     date = datetime.now().strftime("%d-%m-%Y %H:%M:%S")
+    
 # Structure the message to be sent.    
-    message = {"temperature" : actualTemp,
-                "date": date
-              } 
+    message = {"id": id,
+               "deviceId": "WHHTS1",
+               "temperature" : actualTemp,
+               "date": date
+              }
+    
 # Publish message to AWS IoT core using MQTT.
     mqtt_connection.publish(topic=TOPIC, payload=json.dumps(message), qos=mqtt.QoS.AT_LEAST_ONCE)
 # Print published message to the terminal.    
     print("Published: '" + json.dumps(message) + "' to the topic: " + "device/WHHTS1/data")
 # Sleep added to ensure that program only publishes message once a minute.    
+    id= id + 1 
     t.sleep(60)
 
 # Check for Keyboard entry to stop program running.
